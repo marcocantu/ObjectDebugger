@@ -2,7 +2,7 @@ unit ObjectDebuggerForm;
 
 { ******************************* }
 {    Delphi ObjectDebugger        }
-{    MPL 2.0 License              }
+{    MPL 1.0 License              }
 {    Copyright 2016 Marco Cantu   }
 {    marco.cantu@gmail.com        }
 { ******************************* }
