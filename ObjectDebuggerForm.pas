@@ -946,7 +946,10 @@ begin
       RealComp := CurrComp;
       EditingSub := True;
       CurrComp := TComponent (sg.Objects [1, Row]);
-    end;
+    end
+    else
+      CurrComp := cbComps.Items.Objects [
+        cbComps.ItemIndex] as TComponent;
 
     ////////// depending on the type, show up an editor
     case ppInfo.PropType^.Kind of
