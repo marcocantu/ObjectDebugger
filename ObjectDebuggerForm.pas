@@ -21,13 +21,17 @@ type
   private
     fOnTop: Boolean;
     fCopyright, fNull: string;
+    FActive: Boolean;
+    procedure SetActive(const Value: Boolean);
   public
     constructor Create (AOwner: TComponent); override;
+    procedure Show;
   published
     property OnTop: Boolean
       read fOnTop write fOnTop;
     property Copyright: string
       read fCopyright write fNull;
+    property Active: Boolean read FActive write SetActive default True;
   end;
 
 procedure Register;
@@ -114,6 +118,8 @@ type
     Combo: TComboBox;
     // edit box has been modified?
     EditModified: Boolean;
+    // the debugger component
+    ODebugger: TCantObjectDebugger;
   public
     procedure UpdateFormsCombo;
     procedure UpdateCompsCombo;
@@ -577,11 +583,13 @@ begin
     Created := True;
 
   inherited Create (AOwner);
+
+  fActive := True;
   fCopyright := CopyrightString;
   if not (csDesigning in ComponentState) then
   begin
-    CantObjDebForm := TCantObjDebForm.
-      Create (Application);
+    CantObjDebForm := TCantObjDebForm.Create (Application);
+    CantObjDebForm.ODebugger := self;
     if fOnTop then
     begin
       // set topmost style
@@ -1349,13 +1357,28 @@ end;
 procedure TCantObjDebForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := False;
-  Show;
-  UpdateFormsCombo;
+  if ODebugger.Active then
+  begin
+    Show;
+    UpdateFormsCombo;
+  end;
 end;
 
 procedure TCantObjDebForm.EditChange(Sender: TObject);
 begin
   EditModified := True;
+end;
+
+procedure TCantObjectDebugger.SetActive(const Value: Boolean);
+begin
+  FActive := Value;
+end;
+
+procedure TCantObjectDebugger.Show;
+begin
+  CantObjDebForm.Show;
+  CantObjDebForm.UpdateFormsCombo;
+  FActive := True;
 end;
 
 end.
