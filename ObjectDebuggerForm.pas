@@ -22,6 +22,7 @@ type
     fOnTop: Boolean;
     fCopyright, fNull: string;
     FActive: Boolean;
+    FShowOnStartup: Boolean;
     procedure SetActive(const Value: Boolean);
   public
     constructor Create (AOwner: TComponent); override;
@@ -32,6 +33,8 @@ type
     property Copyright: string
       read fCopyright write fNull;
     property Active: Boolean read FActive write SetActive default True;
+    property ShowOnStartup: Boolean
+      read FShowOnStartup write FShowOnStartup default True;
   end;
 
 procedure Register;
@@ -101,6 +104,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Timer1Timer(Sender: TObject);
     procedure EditChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     // the current component
     CurrComp: TComponent;
@@ -586,6 +590,7 @@ begin
 
   fActive := True;
   fCopyright := CopyrightString;
+  FShowOnStartup := True;
   if not (csDesigning in ComponentState) then
   begin
     CantObjDebForm := TCantObjDebForm.Create (Application);
@@ -880,7 +885,7 @@ begin
     begin
       AddLine ('ControlState',
         SetToString (Cardinal (ControlState), TypeInfo (TControlState)),
-        TypeInfo (TControlState));
+        TypeInfo (TControlState));  
       AddLine ('ControlStyle',
         SetToString (Cardinal (ControlStyle), TypeInfo (TControlStyle)),
         TypeInfo (TControlStyle));
@@ -1299,6 +1304,11 @@ begin
       GetSystemMetrics (sm_cxVScroll) - 2;
 end;
 
+procedure TCantObjDebForm.FormShow(Sender: TObject);
+begin
+  UpdateFormsCombo;
+end;
+
 procedure TCantObjDebForm.TopMost1Click(Sender: TObject);
 begin
   TopMost1.Checked := not TopMost1.Checked;
@@ -1357,10 +1367,9 @@ end;
 procedure TCantObjDebForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := False;
-  if ODebugger.Active then
+  if ODebugger.Active and ODebugger.ShowOnStartup then
   begin
     Show;
-    UpdateFormsCombo;
   end;
 end;
 
