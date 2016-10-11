@@ -144,8 +144,8 @@ uses
   Math;
 
 const
-  VersionDescription = 'Object Debugger for Delphi 10 Seattle';
-  VersionRelease = 'Release 5.00';
+  VersionDescription = 'Object Debugger for Delphi';
+  VersionRelease = 'Release 5.10';
   CopyrightString = 'Marco Cantù 1996-2016';
 
 /////////// support code //////////////
