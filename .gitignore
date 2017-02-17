@@ -1,0 +1,7 @@
+*.identcache
+*.dcu
+*.bpl
+*.res
+*.stat
+Win32
+__history

@@ -1,0 +1,54 @@
+{
+  "version": "Delphi Berlin",
+  "known_packages": [
+    "$(BDS)\\Bin\\dclMetropolisUILiveTile240.bpl",
+    "$(BDSBIN)\\dclxml240.bpl",
+    "$(BDSBIN)\\gitide240.bpl",
+    "$(BDSBIN)\\hgide240.bpl",
+    "$(BDSBIN)\\svnide240.bpl",
+    "$(BDSBIN)\\dclbindcomp240.bpl",
+    "$(BDSBIN)\\ExpertsUI240.bpl",
+    "$(BDSBIN)\\dclcommon240.bpl",
+    "$(BDSBIN)\\dclbindcompfmx240.bpl",
+    "$(BDSBIN)\\dclrtl240.bpl",
+    "$(BDSBIN)\\dcltethering240.bpl",
+    "$(BDSBIN)\\dclact240.bpl",
+    "$(BDSBIN)\\dcldb240.bpl",
+    "$(BDSBIN)\\dclstd240.bpl",
+    "$(BDSBIN)\\dclemacsedit240.bpl",
+    "$(BDSBIN)\\dclmlwiz240.bpl",
+    "$(BDSBIN)\\dclshare240.bpl",
+    "$(BDSBIN)\\dclwinx240.bpl",
+    "$(BDSBIN)\\samplevisualizers240.bpl",
+    "$(BDSBIN)\\applet240.bpl",
+    "$(BDSBIN)\\dclappanalytics240.bpl",
+    "$(BDSBIN)\\dclbindcompvcl240.bpl",
+    "$(BDSBIN)\\dclnetwiz240.bpl",
+    "$(BDSBIN)\\dclnet240.bpl",
+    "$(BDSBIN)\\ExpertsCreators240.bpl",
+    "$(BDSBIN)\\dclvcldb240.bpl",
+    "$(BDSBIN)\\dclmid240.bpl",
+    "$(BDSBIN)\\dcl31w240.bpl",
+    "$(BDSBIN)\\dclsmp240.bpl",
+    "$(BDSBIN)\\dclsmpedit240.bpl",
+    "$(BDSBIN)\\dcltouch240.bpl",
+    "$(BDSBIN)\\dclfmxstd240.bpl",
+    "$(BDSBIN)\\fmxstyledesigner240.bpl",
+    "$(BDSBIN)\\dclIndyCore240.bpl",
+    "$(BDSBIN)\\dclIndyProtocols240.bpl",
+    "#(JAMESBASEFOLDER)\\Win32\\Debug\\ObjectDebugger.bpl"
+  ],
+  "library_path": {
+    "win32": [
+      "$(BDSLIB)\\$(Platform)\\release",
+      "$(BDSUSERDIR)\\Imports",
+      "$(BDS)\\Imports",
+      "$(BDSCOMMONDIR)\\Dcp",
+      "$(BDS)\\include"
+    ]
+  },
+  "environment_variables": [
+    "$(PUBLIC)\\Documents\\Embarcadero\\InterBase\\redist\\InterBaseXE7\\IDE_spoof",
+    "$(PATH)"
+  ]
+}

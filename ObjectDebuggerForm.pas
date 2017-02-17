@@ -12,7 +12,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls, TypInfo, ExtCtrls, Grids,
-  Buttons, Menus, ComCtrls;
+  Buttons, Menus, ComCtrls, Vcl.WinXCtrls, System.ImageList, Vcl.ImgList;
 
 ////// component //////
 
@@ -73,6 +73,9 @@ type
     Timer1: TTimer;
     TabSheet3: TTabSheet;
     sgData: TStringGrid;
+    edFilter: TButtonedEdit;
+    ImageList1: TImageList;
+    ImageList2: TImageList;
     procedure cbFormsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbCompsChange(Sender: TObject);
@@ -105,6 +108,11 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure EditChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure SearchBox1Change(Sender: TObject);
+    procedure edFilterRightButtonClick(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
+    procedure edFilterKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     // the current component
     CurrComp: TComponent;
@@ -124,6 +132,9 @@ type
     EditModified: Boolean;
     // the debugger component
     ODebugger: TCantObjectDebugger;
+
+    FFilterCriteria: string;
+    function MatchFilter(const value: string): boolean;
   public
     procedure UpdateFormsCombo;
     procedure UpdateCompsCombo;
@@ -630,6 +641,8 @@ begin
   GetCursorValues (AddToCombo);
   Combo := ComboColor;
   GetColorValues (AddToCombo);
+
+  FFilterCriteria := '';
 end;
 
 {call-back used in the code above...}
@@ -730,6 +743,21 @@ begin
   UpdateData;
 end;
 
+function TCantObjDebForm.MatchFilter(const value: string): boolean;
+begin
+  result := true;
+
+  if Trim(FFilterCriteria) = '' then
+    exit;
+
+  result := Pos(FFilterCriteria, AnsiLowerCase(value)) > 0;
+end;
+
+procedure TCantObjDebForm.PageControl1Change(Sender: TObject);
+begin
+  edFilterRightButtonClick(Sender);
+end;
+
 procedure TCantObjDebForm.UpdateProps;
 // update property and event pages
 var
@@ -762,6 +790,9 @@ begin
     // if it is a real property
     if PropList[nProp].PropType^.Kind <> tkMethod then
     begin
+      // filtering
+      if MatchFilter(PropList[nProp].Name) then
+      begin
       // name
       sgProp.Cells [0, nRowProp] := string(PropList[nProp].Name);
       // value
@@ -814,9 +845,13 @@ begin
           end;
         end;
       end; // adding subproperties
+      end;
     end
     else // it is an event
     begin
+      // filtering
+      if MatchFilter(string(PropList[nProp].Name)) then
+      begin
       // name
       sgEvt.Cells [0, nRowEvt] := string(PropList[nProp].Name);
       // value
@@ -826,6 +861,8 @@ begin
       sgEvt.Objects [0, nRowEvt] := TObject (PropList[nProp]);
       // next
       Inc (nRowEvt);
+      end;
+
     end;
   end; // for
   // set the actual rows
@@ -839,11 +876,15 @@ var
 
   procedure AddLine(Name, Value: string; pti: PTypeInfo);
   begin
+    // filtering
+    if MatchFilter(Name) then
+    begin
     sgData.Cells [0, nRow] := Name;
     sgData.Cells [1, nRow] := Value;
     sgData.Objects [0, nRow] := Pointer (pti);
     sgProp.Objects [1, nRow] := nil;
     Inc (nRow);
+    end;
   end;
 
 begin
@@ -1134,6 +1175,14 @@ begin
   UpdateProps;
 end;
 
+procedure TCantObjDebForm.SearchBox1Change(Sender: TObject);
+begin
+  FFilterCriteria := AnsiLowerCase(edFilter.Text);
+
+  UpdateProps;
+  UpdateData;
+end;
+
 //////////////////////////////////
 /////// special editors... ///////
 //////////////////////////////////
@@ -1233,6 +1282,28 @@ begin
       ItemIndex := 0;
   ComboEnumChange (ComboEnum);
 end;
+
+procedure TCantObjDebForm.edFilterKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+    if PageControl1.ActivePage = TabSheet1 then
+      sgProp.SetFocus
+    else if PageControl1.ActivePage = TabSheet2 then
+      sgEvt.SetFocus
+    else
+      sgData.SetFocus;
+  end;
+end;
+
+procedure TCantObjDebForm.edFilterRightButtonClick(Sender: TObject);
+begin
+  edFilter.Text := '';
+  UpdateProps;
+  UpdateData;
+end;
+
 
 ///////// edit ch //////////
 

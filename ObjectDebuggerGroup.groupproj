@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{D545F2D1-85B4-4860-8A1C-F29908F1CDEE}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ObjectDebugger.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Test\Project1.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ObjectDebugger">
+        <MSBuild Projects="ObjectDebugger.dproj"/>
+    </Target>
+    <Target Name="ObjectDebugger:Clean">
+        <MSBuild Projects="ObjectDebugger.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ObjectDebugger:Make">
+        <MSBuild Projects="ObjectDebugger.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Project1">
+        <MSBuild Projects="Test\Project1.dproj"/>
+    </Target>
+    <Target Name="Project1:Clean">
+        <MSBuild Projects="Test\Project1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Project1:Make">
+        <MSBuild Projects="Test\Project1.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ObjectDebugger;Project1"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ObjectDebugger:Clean;Project1:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ObjectDebugger:Make;Project1:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

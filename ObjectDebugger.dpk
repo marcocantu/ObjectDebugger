@@ -29,7 +29,9 @@ package ObjectDebugger;
 
 requires
   rtl,
-  vcl;
+  vcl,
+  vclimg,
+  vclwinx;
 
 contains
   ObjectDebuggerForm in 'ObjectDebuggerForm.pas' {CantObjDebForm};
