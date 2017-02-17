@@ -1,7 +1,6 @@
 {
   "version": "Delphi Berlin",
   "known_packages": [
-    "$(BDS)\\Bin\\dclMetropolisUILiveTile240.bpl",
     "$(BDSBIN)\\dclxml240.bpl",
     "$(BDSBIN)\\gitide240.bpl",
     "$(BDSBIN)\\hgide240.bpl",
@@ -36,7 +35,8 @@
     "$(BDSBIN)\\fmxstyledesigner240.bpl",
     "$(BDSBIN)\\dclIndyCore240.bpl",
     "$(BDSBIN)\\dclIndyProtocols240.bpl",
-    "#(JAMESBASEFOLDER)\\Win32\\Debug\\ObjectDebugger.bpl"
+    "$(BDSBIN)\\dclMetropolisUILiveTile240.bpl",
+    "C:\\Users\\Public\\Documents\\Embarcadero\\Studio\\18.0\\Bpl\\ObjectDebugger.bpl"
   ],
   "library_path": {
     "win32": [
@@ -45,6 +45,10 @@
       "$(BDS)\\Imports",
       "$(BDSCOMMONDIR)\\Dcp",
       "$(BDS)\\include"
+    ],
+    "win64": [
+      "Testando",
+      "Mais um"
     ]
   },
   "environment_variables": [
