@@ -45,10 +45,6 @@
       "$(BDS)\\Imports",
       "$(BDSCOMMONDIR)\\Dcp",
       "$(BDS)\\include"
-    ],
-    "win64": [
-      "Testando",
-      "Mais um"
     ]
   },
   "environment_variables": [
