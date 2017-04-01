@@ -157,7 +157,7 @@ uses
 
 const
   VersionDescription = 'Object Debugger for Delphi';
-  VersionRelease = 'Release 5.10';
+  VersionRelease = 'Release 5.20';
   CopyrightString = 'Marco Cantù 1996-2016';
 
 /////////// support code //////////////
