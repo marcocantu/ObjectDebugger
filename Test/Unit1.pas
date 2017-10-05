@@ -12,10 +12,14 @@ type
     Edit1: TEdit;
     Button1: TButton;
     DBGrid1: TDBGrid;
+    Button2: TButton;
     CantObjectDebugger1: TCantObjectDebugger;
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
+    FCantObjectDebugger: TCantObjectDebugger;
+    procedure CantObjectDebuggerClose(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -30,6 +34,20 @@ implementation
 procedure TForm1.Button1Click(Sender: TObject);
 begin
   showmessage(edit1.text);
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  if FCantObjectDebugger = nil then
+    FCantObjectDebugger := TCantObjectDebugger.Create(nil);
+
+  FCantObjectDebugger.AllowFormClose := true;
+  FCantObjectDebugger.OnClose := CantObjectDebuggerClose;
+end;
+
+procedure TForm1.CantObjectDebuggerClose(Sender: TObject);
+begin
+ FCantObjectDebugger := nil;
 end;
 
 end.
