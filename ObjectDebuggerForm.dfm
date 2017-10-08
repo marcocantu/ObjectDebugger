@@ -2,7 +2,7 @@ object CantObjDebForm: TCantObjDebForm
   Left = 295
   Top = 107
   Caption = 'Object Debugger'
-  ClientHeight = 372
+  ClientHeight = 312
   ClientWidth = 274
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,6 +14,7 @@ object CantObjDebForm: TCantObjDebForm
   OldCreateOrder = True
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
@@ -22,8 +23,8 @@ object CantObjDebForm: TCantObjDebForm
     Left = 0
     Top = 86
     Width = 274
-    Height = 286
-    ActivePage = TabSheet1
+    Height = 226
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 2
     OnChange = PageControl1Change
@@ -105,7 +106,7 @@ object CantObjDebForm: TCantObjDebForm
         Left = 0
         Top = 0
         Width = 266
-        Height = 258
+        Height = 198
         Align = alClient
         Color = clBtnFace
         ColCount = 2
@@ -143,7 +144,7 @@ object CantObjDebForm: TCantObjDebForm
         Left = 0
         Top = 0
         Width = 266
-        Height = 258
+        Height = 198
         Align = alClient
         Color = clBtnFace
         ColCount = 2
@@ -180,7 +181,7 @@ object CantObjDebForm: TCantObjDebForm
         Left = 0
         Top = 0
         Width = 266
-        Height = 258
+        Height = 198
         Align = alClient
         Color = clBtnFace
         ColCount = 2
@@ -192,7 +193,7 @@ object CantObjDebForm: TCantObjDebForm
         ScrollBars = ssVertical
         TabOrder = 0
         OnMouseDown = sgMouseDown
-        OnSelectCell = sgPropSelectCell
+        OnSelectCell = sgDataSelectCell
         ColWidths = (
           109
           120)
@@ -318,7 +319,7 @@ object CantObjDebForm: TCantObjDebForm
     Left = 196
     Top = 150
     Bitmap = {
-      494C010102000800300010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101020008003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

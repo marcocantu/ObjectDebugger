@@ -23,9 +23,13 @@ type
     fCopyright, fNull: string;
     FActive: Boolean;
     FShowOnStartup: Boolean;
+
+    FAllowFormClose: Boolean;
+    FOnClose: TNotifyEvent;
     procedure SetActive(const Value: Boolean);
   public
     constructor Create (AOwner: TComponent); override;
+    destructor Destroy; override;
     procedure Show;
   published
     property OnTop: Boolean
@@ -35,6 +39,9 @@ type
     property Active: Boolean read FActive write SetActive default True;
     property ShowOnStartup: Boolean
       read FShowOnStartup write FShowOnStartup default True;
+    property AllowFormClose: Boolean
+      read FAllowFormClose write FAllowFormClose default False;
+    property OnClose: TNotifyEvent read FOnClose write FOnClose;
   end;
 
 procedure Register;
@@ -78,14 +85,10 @@ type
     procedure cbFormsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbCompsChange(Sender: TObject);
-    procedure sgPropSelectCell(Sender: TObject; Col, Row: Longint;
-      var CanSelect: Boolean);
     procedure RefreshForms1Click(Sender: TObject);
     procedure RefreshComponents1Click(Sender: TObject);
     procedure About1Click(Sender: TObject);
     procedure RefreshValues1Click(Sender: TObject);
-    procedure sgDataSelectCell(Sender: TObject; Col, Row: Longint;
-      var CanSelect: Boolean);
     procedure sgMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure EditStrExit(Sender: TObject);
@@ -112,6 +115,9 @@ type
     procedure PageControl1Change(Sender: TObject);
     procedure edFilterKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure sgPropSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
+    procedure sgDataSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
+    procedure FormDestroy(Sender: TObject);
   private
     // the current component
     CurrComp: TComponent;
@@ -603,6 +609,10 @@ begin
   fActive := True;
   fCopyright := CopyrightString;
   FShowOnStartup := True;
+
+  FAllowFormClose := False;
+  FOnClose := nil;
+
   if not (csDesigning in ComponentState) then
   begin
     CantObjDebForm := TCantObjDebForm.Create (Application);
@@ -616,6 +626,16 @@ begin
     CantObjDebForm.Timer1.Enabled := True;
   end;
 end;
+
+destructor TCantObjectDebugger.Destroy;
+begin
+  if Assigned(FOnClose) then
+    FOnClose(Self);
+  Created := False;
+
+  inherited;
+end;
+
 
 procedure Register;
 begin
@@ -645,6 +665,11 @@ begin
   // initialize filter
   FFilterCriteria := '';
   edFilter.TextHint := 'Search ' + PageControl1.ActivePage.Caption;
+end;
+
+procedure TCantObjDebForm.FormDestroy(Sender: TObject);
+begin
+  ODebugger.Free;
 end;
 
 {call-back used in the code above...}
@@ -971,7 +996,7 @@ end;
 //////////// string grid selections and clicks /////////////
 ////////////////////////////////////////////////////////////
 
-procedure TCantObjDebForm.sgPropSelectCell(Sender: TObject; Col, Row: Longint;
+procedure TCantObjDebForm.sgPropSelectCell(Sender: TObject; ACol, ARow: Integer;
   var CanSelect: Boolean);
 var
   sg: TStringGrid;
@@ -982,30 +1007,30 @@ procedure PlaceControl (Ctrl: TWinControl);
 begin
   Ctrl.BringToFront;
   Ctrl.Show;
-  Ctrl.BoundsRect := sg.CellRect (Col, Row);
+  Ctrl.BoundsRect := sg.CellRect (ACol, ARow);
   Ctrl.SetFocus;
 end;
 
 begin
   sg := Sender as TStringGrid;
   // get the data and show it in the first line
-  ppInfo := PPropInfo (sg.Objects [0, Row] );
+  ppInfo := PPropInfo (sg.Objects [0, ARow] );
   if (ppInfo = nil) or (sg = sgData) then
     Exit;
   sg.Cells [1, 0] := string(ppInfo.PropType^.Name);
   sg.Objects [1, 0] := Pointer (ppInfo.PropType^);
   // if second column activate the proper editor
-  if Col = 1 then
+  if ACol = 1 then
   begin
     CurrProp := ppInfo;
-    CurrRow := Row;
+    CurrRow := ARow;
     // if it is a subproperty, select the value of
     // the property as the current component
-    if sg.Objects [1, Row] <> nil then
+    if sg.Objects [1, ARow] <> nil then
     begin
       RealComp := CurrComp;
       EditingSub := True;
-      CurrComp := TComponent (sg.Objects [1, Row]);
+      CurrComp := TComponent (sg.Objects [1, ARow]);
     end
     else
       CurrComp := cbComps.Items.Objects [
@@ -1129,7 +1154,7 @@ begin
   end;
 end;
 
-procedure TCantObjDebForm.sgDataSelectCell(Sender: TObject; Col, Row: Longint;
+procedure TCantObjDebForm.sgDataSelectCell(Sender: TObject; ACol, ARow: Integer;
   var CanSelect: Boolean);
 var
   sg: TStringGrid;
@@ -1137,7 +1162,7 @@ var
 begin
   sg := Sender as TStringGrid;
   // get the data and show it in the first line
-  ptInfo := PTypeInfo (sg.Objects [0, Row] );
+  ptInfo := PTypeInfo (sg.Objects [0, ARow] );
   sg.Cells [1, 0] := string(ptInfo.Name);
   sg.Objects [1, 0] := Pointer (ptInfo);
 end;
@@ -1443,8 +1468,10 @@ end;
 procedure TCantObjDebForm.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
-  // never close the form...
-  Action := caMinimize;
+  if ODebugger.AllowFormClose then
+    Action := caFree
+  else
+    Action := caMinimize;
 end;
 
 procedure TCantObjDebForm.Timer1Timer(Sender: TObject);

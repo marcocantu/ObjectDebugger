@@ -56,10 +56,20 @@ object Form1: TForm1
         Visible = True
       end>
   end
+  object Button2: TButton
+    Left = 320
+    Top = 96
+    Width = 115
+    Height = 25
+    Caption = 'Button with Close'
+    TabOrder = 3
+    OnClick = Button2Click
+  end
   object CantObjectDebugger1: TCantObjectDebugger
     OnTop = False
     Copyright = 'Marco Cant'#249' 1996-2016'
-    Left = 376
-    Top = 24
+    ShowOnStartup = False
+    Left = 344
+    Top = 16
   end
 end
