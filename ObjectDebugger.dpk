@@ -1,4 +1,4 @@
-package ObjectDebugger10Seattle;
+package ObjectDebugger;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -29,7 +29,9 @@ package ObjectDebugger10Seattle;
 
 requires
   rtl,
-  vcl;
+  vcl,
+  vclimg,
+  vclwinx;
 
 contains
   ObjectDebuggerForm in 'ObjectDebuggerForm.pas' {CantObjDebForm};
