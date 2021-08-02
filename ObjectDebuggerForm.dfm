@@ -28,9 +28,6 @@ object CantObjDebForm: TCantObjDebForm
     Align = alClient
     TabOrder = 1
     OnChange = PageControl1Change
-    ExplicitTop = 86
-    ExplicitWidth = 260
-    ExplicitHeight = 293
     object TabSheet1: TTabSheet
       Caption = 'Properties'
       object ListSet: TListBox
@@ -123,7 +120,6 @@ object CantObjDebForm: TCantObjDebForm
         OnDblClick = sgPropDblClick
         OnMouseDown = sgDataMouseDown
         OnSelectCell = sgPropSelectCell
-        ExplicitWidth = 342
         ColWidths = (
           109
           120)
@@ -161,7 +157,6 @@ object CantObjDebForm: TCantObjDebForm
         TabOrder = 0
         OnMouseDown = sgDataMouseDown
         OnSelectCell = sgPropSelectCell
-        ExplicitWidth = 342
         ColWidths = (
           109
           120)
@@ -199,8 +194,6 @@ object CantObjDebForm: TCantObjDebForm
         TabOrder = 0
         OnMouseDown = sgDataMouseDown
         OnSelectCell = sgDataSelectCell
-        ExplicitWidth = 252
-        ExplicitHeight = 265
         ColWidths = (
           109
           120)
@@ -227,7 +220,6 @@ object CantObjDebForm: TCantObjDebForm
     Height = 85
     Align = alTop
     TabOrder = 0
-    ExplicitWidth = 350
     object cbComps: TComboBox
       AlignWithMargins = True
       Left = 4
@@ -239,9 +231,6 @@ object CantObjDebForm: TCantObjDebForm
       Sorted = True
       TabOrder = 0
       OnChange = cbCompsChange
-      ExplicitLeft = 8
-      ExplicitTop = 35
-      ExplicitWidth = 257
     end
     object cbForms: TComboBox
       AlignWithMargins = True
@@ -253,9 +242,6 @@ object CantObjDebForm: TCantObjDebForm
       Style = csDropDownList
       TabOrder = 1
       OnChange = cbFormsChange
-      ExplicitLeft = 8
-      ExplicitTop = 8
-      ExplicitWidth = 257
     end
     object edFilter: TButtonedEdit
       AlignWithMargins = True
@@ -276,9 +262,6 @@ object CantObjDebForm: TCantObjDebForm
       OnChange = SearchBox1Change
       OnKeyDown = edFilterKeyDown
       OnRightButtonClick = edFilterRightButtonClick
-      ExplicitLeft = 0
-      ExplicitTop = 104
-      ExplicitWidth = 350
     end
   end
   object ColorDialog1: TColorDialog

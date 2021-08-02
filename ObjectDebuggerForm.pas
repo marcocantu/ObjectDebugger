@@ -1,11 +1,14 @@
 unit ObjectDebuggerForm;
 
-{ ******************************* }
-{    Delphi ObjectDebugger        }
-{    MPL 2.0 License              }
-{    Copyright 2016 Marco Cantu   }
-{    marco.cantu@gmail.com        }
-{ ******************************* }
+// Delphi ObjectDebugger
+// https://github.com/marcocantu/ObjectDebugger
+
+// MPL 2.0 License
+// Copyright 2016 Marco Cantu
+// marco.cantu@gmail.com
+
+// Contributors:
+// - Alessandro Fragnani
 
 interface
 
@@ -165,8 +168,8 @@ uses
 
 const
   VersionDescription = 'Object Debugger for Delphi';
-  VersionRelease = 'Release 5.40';
-  CopyrightString = 'Marco Cantù 1996-2016';
+  VersionRelease = 'Release 5.50';
+  CopyrightString = 'Marco Cantù 1996-2021';
 
 /////////// support code //////////////
 
