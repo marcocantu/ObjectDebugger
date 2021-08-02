@@ -159,11 +159,11 @@ implementation
 {$R *.DFM}
 
 uses
-  Math, System.UITypes;
+  Math, System.UITypes, System.RegularExpressions;
 
 const
   VersionDescription = 'Object Debugger for Delphi';
-  VersionRelease = 'Release 5.20';
+  VersionRelease = 'Release 5.40';
   CopyrightString = 'Marco Cantù 1996-2016';
 
 /////////// support code //////////////
@@ -1284,7 +1284,13 @@ begin
   if IdentToColor (ComboColor.Text, Color) then
     ComboColor.Tag := Color
   else
-    Color := TColor (ComboColor.Tag);
+  begin
+    // hex values are 9 chars length, but at least 7 works (00 are added to the beginning)
+    if TRegEx.IsMatch(ComboColor.Text, '^\$[a-fA-F0-9]{6,8}\Z') then
+      Color := StringToColor(ComboColor.Text)
+    else
+      Color := TColor (ComboColor.Tag);
+  end;
   SetOrdProp (CurrComp, CurrProp, Color);
 end;
 

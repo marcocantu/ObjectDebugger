@@ -34,6 +34,7 @@ implementation
 procedure TForm1.Button1Click(Sender: TObject);
 begin
   showmessage(edit1.text);
+  CantObjectDebugger1.Show;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
