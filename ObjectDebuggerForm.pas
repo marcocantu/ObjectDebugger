@@ -12,7 +12,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls, TypInfo, ExtCtrls, Grids,
-  Buttons, Menus, ComCtrls;
+  Buttons, Menus, ComCtrls, Vcl.WinXCtrls, System.ImageList, Vcl.ImgList;
 
 ////// component //////
 
@@ -73,6 +73,8 @@ type
     Timer1: TTimer;
     TabSheet3: TTabSheet;
     sgData: TStringGrid;
+    edFilter: TButtonedEdit;
+    ImageList1: TImageList;
     procedure cbFormsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbCompsChange(Sender: TObject);
@@ -105,6 +107,11 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure EditChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure SearchBox1Change(Sender: TObject);
+    procedure edFilterRightButtonClick(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
+    procedure edFilterKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     // the current component
     CurrComp: TComponent;
@@ -124,6 +131,11 @@ type
     EditModified: Boolean;
     // the debugger component
     ODebugger: TCantObjectDebugger;
+
+    // filter props/events/data
+    FFilterCriteria: string;
+    function MatchFilter(const value: string): boolean;
+    procedure ClearFilterEdit;
   public
     procedure UpdateFormsCombo;
     procedure UpdateCompsCombo;
@@ -141,7 +153,7 @@ implementation
 {$R *.DFM}
 
 uses
-  Math;
+  Math, System.UITypes;
 
 const
   VersionDescription = 'Object Debugger for Delphi';
@@ -630,6 +642,9 @@ begin
   GetCursorValues (AddToCombo);
   Combo := ComboColor;
   GetColorValues (AddToCombo);
+  // initialize filter
+  FFilterCriteria := '';
+  edFilter.TextHint := 'Search ' + PageControl1.ActivePage.Caption;
 end;
 
 {call-back used in the code above...}
@@ -691,6 +706,8 @@ begin
   // save the current form or data module
   CurrForm := cbForms.Items.Objects [
     cbForms.ItemIndex] as TComponent;
+  // clear the filter
+  ClearFilterEdit;
   // update the list of components
   UpdateCompsCombo;
 end;
@@ -725,9 +742,26 @@ begin
   // select the new component
   CurrComp := cbComps.Items.Objects [
     cbComps.ItemIndex] as TComponent;
+  // clear the filter
+  ClearFilterEdit;
   // update the grids
   UpdateProps;
   UpdateData;
+end;
+
+function TCantObjDebForm.MatchFilter(const value: string): boolean;
+begin
+  result := true;
+
+  if Trim(FFilterCriteria) = '' then
+    exit;
+
+  result := Pos(FFilterCriteria, AnsiLowerCase(value)) > 0;
+end;
+
+procedure TCantObjDebForm.PageControl1Change(Sender: TObject);
+begin
+  ClearFilterEdit;
 end;
 
 procedure TCantObjDebForm.UpdateProps;
@@ -762,70 +796,79 @@ begin
     // if it is a real property
     if PropList[nProp].PropType^.Kind <> tkMethod then
     begin
-      // name
-      sgProp.Cells [0, nRowProp] := string(PropList[nProp].Name);
-      // value
-      sgProp.Cells [1, nRowProp] := GetPropValAsString (
-        CurrComp, PropList [nProp]);
-      // data
-      sgProp.Objects [0, nRowProp] := TObject (PropList[nProp]);
-      sgProp.Objects [1, nRowProp] := nil;
-
-      // move to the next line
-      Inc (nRowProp);
-
-      // if the property is a class
-      if (PropList[nProp].PropType^.Kind = tkClass) then
+      // filtering
+      if MatchFilter(string(PropList[nProp].Name)) then
       begin
-        SubObj := TPersistent (GetOrdProp (
-          CurrComp, PropList[nProp]));
-        if (SubObj <> nil) and not (SubObj is TComponent) then
+        // name
+        sgProp.Cells [0, nRowProp] := string(PropList[nProp].Name);
+        // value
+        sgProp.Cells [1, nRowProp] := GetPropValAsString (
+          CurrComp, PropList [nProp]);
+        // data
+        sgProp.Objects [0, nRowProp] := TObject (PropList[nProp]);
+        sgProp.Objects [1, nRowProp] := nil;
+
+        // move to the next line
+        Inc (nRowProp);
+
+        // if the property is a class
+        if (PropList[nProp].PropType^.Kind = tkClass) then
         begin
-          NumberOfSubProps := GetTypeData(SubObj.ClassInfo).PropCount;
-          if NumberOfSubProps > 0 then
+          SubObj := TPersistent (GetOrdProp (
+            CurrComp, PropList[nProp]));
+          if (SubObj <> nil) and not (SubObj is TComponent) then
           begin
-            // add plus sign
-            sgProp.Cells [0, nRowProp - 1] := '+' +
-              sgProp.Cells [0, nRowProp - 1];
-            // add space for subproperties...
-            sgProp.RowCount := sgProp.RowCount + NumberOfSubProps;
-            // get the list of subproperties and sort it
-            GetPropInfos (subObj.ClassInfo, @SubPropList);
-            SortPropList(@SubPropList, NumberOfSubProps);
-            // show the name of each subproperty
-            for nSubProp := 0 to NumberOfSubProps - 1 do
+            NumberOfSubProps := GetTypeData(SubObj.ClassInfo).PropCount;
+            if NumberOfSubProps > 0 then
             begin
-              // if it is a real property
-              if SubPropList[nSubProp].PropType^.Kind <> tkMethod then
+              // add plus sign
+              sgProp.Cells [0, nRowProp - 1] := '+' +
+                sgProp.Cells [0, nRowProp - 1];
+              // add space for subproperties...
+              sgProp.RowCount := sgProp.RowCount + NumberOfSubProps;
+              // get the list of subproperties and sort it
+              GetPropInfos (subObj.ClassInfo, @SubPropList);
+              SortPropList(@SubPropList, NumberOfSubProps);
+              // show the name of each subproperty
+              for nSubProp := 0 to NumberOfSubProps - 1 do
               begin
-                // name (indented)
-                sgProp.Cells [0, nRowProp] :=
-                   '    ' + string(SubPropList[nSubProp].Name);
-                // value
-                sgProp.Cells [1, nRowProp] := GetPropValAsString (
-                  SubObj, SubPropList [nSubProp]);
-                // data
-                sgProp.Objects [0, nRowProp] :=
-                  TObject (SubPropList[nSubProp]);
-                sgProp.Objects [1, nRowProp] := SubObj;
-                Inc (nRowProp);
-              end; // if
-            end; // for
+                // if it is a real property
+                if SubPropList[nSubProp].PropType^.Kind <> tkMethod then
+                begin
+                  // name (indented)
+                  sgProp.Cells [0, nRowProp] :=
+                     '    ' + string(SubPropList[nSubProp].Name);
+                  // value
+                  sgProp.Cells [1, nRowProp] := GetPropValAsString (
+                    SubObj, SubPropList [nSubProp]);
+                  // data
+                  sgProp.Objects [0, nRowProp] :=
+                    TObject (SubPropList[nSubProp]);
+                  sgProp.Objects [1, nRowProp] := SubObj;
+                  Inc (nRowProp);
+                end; // if
+              end; // for
+            end;
           end;
-        end;
-      end; // adding subproperties
+        end; // adding subproperties
+      end;
     end
     else // it is an event
     begin
-      // name
-      sgEvt.Cells [0, nRowEvt] := string(PropList[nProp].Name);
-      // value
-      sgEvt.Cells [1, nRowEvt] := GetPropValAsString (
-        CurrComp, PropList [nProp]);
-      // data
-      sgEvt.Objects [0, nRowEvt] := TObject (PropList[nProp]);
-      // next
-      Inc (nRowEvt);
+      // filtering
+      if MatchFilter(string(PropList[nProp].Name)) then
+      begin
+        // name
+        sgEvt.Cells [0, nRowEvt] := string(PropList[nProp].Name);
+        // value
+        sgEvt.Cells [1, nRowEvt] := GetPropValAsString (
+          CurrComp, PropList [nProp]);
+        // data
+        sgEvt.Objects [0, nRowEvt] := TObject (PropList[nProp]);
+        // next
+        Inc (nRowEvt);
+      end;
+
     end;
   end; // for
   // set the actual rows
@@ -839,11 +882,15 @@ var
 
   procedure AddLine(Name, Value: string; pti: PTypeInfo);
   begin
-    sgData.Cells [0, nRow] := Name;
-    sgData.Cells [1, nRow] := Value;
-    sgData.Objects [0, nRow] := Pointer (pti);
-    sgProp.Objects [1, nRow] := nil;
-    Inc (nRow);
+    // filtering
+    if MatchFilter(Name) then
+    begin
+      sgData.Cells [0, nRow] := Name;
+      sgData.Cells [1, nRow] := Value;
+      sgData.Objects [0, nRow] := Pointer (pti);
+      sgProp.Objects [1, nRow] := nil;
+      Inc (nRow);
+    end;
   end;
 
 begin
@@ -1134,6 +1181,14 @@ begin
   UpdateProps;
 end;
 
+procedure TCantObjDebForm.SearchBox1Change(Sender: TObject);
+begin
+  FFilterCriteria := AnsiLowerCase(edFilter.Text);
+
+  UpdateProps;
+  UpdateData;
+end;
+
 //////////////////////////////////
 /////// special editors... ///////
 //////////////////////////////////
@@ -1233,6 +1288,34 @@ begin
       ItemIndex := 0;
   ComboEnumChange (ComboEnum);
 end;
+
+procedure TCantObjDebForm.edFilterKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_DOWN then
+  begin
+    if PageControl1.ActivePage = TabSheet1 then
+      sgProp.SetFocus
+    else if PageControl1.ActivePage = TabSheet2 then
+      sgEvt.SetFocus
+    else
+      sgData.SetFocus;
+  end;
+end;
+
+procedure TCantObjDebForm.ClearFilterEdit;
+begin
+  edFilter.Text := '';
+  edFilter.TextHint := 'Search ' + PageControl1.ActivePage.Caption;
+  UpdateProps;
+  UpdateData;
+end;
+
+procedure TCantObjDebForm.edFilterRightButtonClick(Sender: TObject);
+begin
+  ClearFilterEdit;
+end;
+
 
 ///////// edit ch //////////
 
