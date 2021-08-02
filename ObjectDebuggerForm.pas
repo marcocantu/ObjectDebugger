@@ -89,8 +89,6 @@ type
     procedure RefreshComponents1Click(Sender: TObject);
     procedure About1Click(Sender: TObject);
     procedure RefreshValues1Click(Sender: TObject);
-    procedure sgMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure EditStrExit(Sender: TObject);
     procedure EditNumExit(Sender: TObject);
     procedure ComboColorDblClick(Sender: TObject);
@@ -115,9 +113,13 @@ type
     procedure PageControl1Change(Sender: TObject);
     procedure edFilterKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure sgPropSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
-    procedure sgDataSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
     procedure FormDestroy(Sender: TObject);
+    procedure sgDataMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure sgPropSelectCell(Sender: TObject; ACol, ARow: Integer;
+      var CanSelect: Boolean);
+    procedure sgDataSelectCell(Sender: TObject; ACol, ARow: Integer;
+      var CanSelect: Boolean);
   private
     // the current component
     CurrComp: TComponent;
@@ -996,110 +998,110 @@ end;
 //////////// string grid selections and clicks /////////////
 ////////////////////////////////////////////////////////////
 
-procedure TCantObjDebForm.sgPropSelectCell(Sender: TObject; ACol, ARow: Integer;
-  var CanSelect: Boolean);
-var
-  sg: TStringGrid;
-  ppInfo: PPropInfo;
-  I: Integer;
-
-procedure PlaceControl (Ctrl: TWinControl);
-begin
-  Ctrl.BringToFront;
-  Ctrl.Show;
-  Ctrl.BoundsRect := sg.CellRect (ACol, ARow);
-  Ctrl.SetFocus;
-end;
-
-begin
-  sg := Sender as TStringGrid;
-  // get the data and show it in the first line
-  ppInfo := PPropInfo (sg.Objects [0, ARow] );
-  if (ppInfo = nil) or (sg = sgData) then
-    Exit;
-  sg.Cells [1, 0] := string(ppInfo.PropType^.Name);
-  sg.Objects [1, 0] := Pointer (ppInfo.PropType^);
-  // if second column activate the proper editor
-  if ACol = 1 then
-  begin
-    CurrProp := ppInfo;
-    CurrRow := ARow;
-    // if it is a subproperty, select the value of
-    // the property as the current component
-    if sg.Objects [1, ARow] <> nil then
-    begin
-      RealComp := CurrComp;
-      EditingSub := True;
-      CurrComp := TComponent (sg.Objects [1, ARow]);
-    end
-    else
-      CurrComp := cbComps.Items.Objects [
-        cbComps.ItemIndex] as TComponent;
-
-    ////////// depending on the type, show up an editor
-    case ppInfo.PropType^.Kind of
-
-      tkInteger: ////////////////////////////////////////
-      begin
-        if ppInfo.PropType^.Name = 'TCursor' then
-        begin
-          ComboCursor.Text := GetPropValAsString (CurrComp, ppInfo);
-          PlaceControl (ComboCursor);
-        end
-        else if ppInfo.PropType^.Name = 'TColor' then
-        begin
-          ComboColor.Tag := GetOrdProp (CurrComp, ppInfo);
-          ComboColor.Text := GetPropValAsString (CurrComp, ppInfo);
-          PlaceControl (ComboColor)
-        end else
-        begin
-          EditNum.Text := GetPropValAsString (CurrComp, ppInfo);
-          PlaceControl (EditNum);
-          EditModified := False;
-        end;
-      end;
-
-      tkChar: ////////////////////////////////////////////
-      begin
-        EditCh.Text := GetPropValAsString (CurrComp, ppInfo);
-        PlaceControl (EditCh);
-        EditModified := False;
-      end;
-
-      tkEnumeration: /////////////////////////////////////
-      begin
-        ComboEnum.Clear;
-        ListEnum (ppInfo.PropType^, ComboEnum.Items, False);
-        ComboEnum.ItemIndex := ComboEnum.Items.IndexOf (
-          GetPropValAsString (CurrComp, ppInfo));
-        PlaceControl (ComboEnum);
-      end;
-
-      tkString, tkLString, tkUString, tkWString: //////////////////////////
-      begin
-        EditStr.Text := GetPropValAsString (
-          CurrComp, ppInfo);
-        PlaceControl (EditStr);
-        EditModified := False;
-      end;
-
-      tkSet: ////////////////////////////////////////
-      begin
-        ListSet.Clear;
-        ListEnum (
-          GetTypeData (ppInfo.PropType^).CompType^,
-          ListSet.Items, False);
-        // select the "on" items
-        for I := 0 to ListSet.Items.Count - 1 do
-          ListSet.Selected [I] :=
-            IsBitOn (GetOrdProp (CurrComp, ppINfo), I);
-        PlaceControl (ListSet);
-        ListSet.Height := ListSet.Height * 8;
-      end;
-      // tkClass: //// see double click...
-    end;
-  end;
-end;
+//procedure TCantObjDebForm.sgPropSelectCell(Sender: TObject; ACol, ARow: Integer;
+//  var CanSelect: Boolean);
+//var
+//  sg: TStringGrid;
+//  ppInfo: PPropInfo;
+//  I: Integer;
+//
+//procedure PlaceControl (Ctrl: TWinControl);
+//begin
+//  Ctrl.BringToFront;
+//  Ctrl.Show;
+//  Ctrl.BoundsRect := sg.CellRect (ACol, ARow);
+//  Ctrl.SetFocus;
+//end;
+//
+//begin
+//  sg := Sender as TStringGrid;
+//  // get the data and show it in the first line
+//  ppInfo := PPropInfo (sg.Objects [0, ARow] );
+//  if (ppInfo = nil) or (sg = sgData) then
+//    Exit;
+//  sg.Cells [1, 0] := string(ppInfo.PropType^.Name);
+//  sg.Objects [1, 0] := Pointer (ppInfo.PropType^);
+//  // if second column activate the proper editor
+//  if ACol = 1 then
+//  begin
+//    CurrProp := ppInfo;
+//    CurrRow := ARow;
+//    // if it is a subproperty, select the value of
+//    // the property as the current component
+//    if sg.Objects [1, ARow] <> nil then
+//    begin
+//      RealComp := CurrComp;
+//      EditingSub := True;
+//      CurrComp := TComponent (sg.Objects [1, ARow]);
+//    end
+//    else
+//      CurrComp := cbComps.Items.Objects [
+//        cbComps.ItemIndex] as TComponent;
+//
+//    ////////// depending on the type, show up an editor
+//    case ppInfo.PropType^.Kind of
+//
+//      tkInteger: ////////////////////////////////////////
+//      begin
+//        if ppInfo.PropType^.Name = 'TCursor' then
+//        begin
+//          ComboCursor.Text := GetPropValAsString (CurrComp, ppInfo);
+//          PlaceControl (ComboCursor);
+//        end
+//        else if ppInfo.PropType^.Name = 'TColor' then
+//        begin
+//          ComboColor.Tag := GetOrdProp (CurrComp, ppInfo);
+//          ComboColor.Text := GetPropValAsString (CurrComp, ppInfo);
+//          PlaceControl (ComboColor)
+//        end else
+//        begin
+//          EditNum.Text := GetPropValAsString (CurrComp, ppInfo);
+//          PlaceControl (EditNum);
+//          EditModified := False;
+//        end;
+//      end;
+//
+//      tkChar: ////////////////////////////////////////////
+//      begin
+//        EditCh.Text := GetPropValAsString (CurrComp, ppInfo);
+//        PlaceControl (EditCh);
+//        EditModified := False;
+//      end;
+//
+//      tkEnumeration: /////////////////////////////////////
+//      begin
+//        ComboEnum.Clear;
+//        ListEnum (ppInfo.PropType^, ComboEnum.Items, False);
+//        ComboEnum.ItemIndex := ComboEnum.Items.IndexOf (
+//          GetPropValAsString (CurrComp, ppInfo));
+//        PlaceControl (ComboEnum);
+//      end;
+//
+//      tkString, tkLString, tkUString, tkWString: //////////////////////////
+//      begin
+//        EditStr.Text := GetPropValAsString (
+//          CurrComp, ppInfo);
+//        PlaceControl (EditStr);
+//        EditModified := False;
+//      end;
+//
+//      tkSet: ////////////////////////////////////////
+//      begin
+//        ListSet.Clear;
+//        ListEnum (
+//          GetTypeData (ppInfo.PropType^).CompType^,
+//          ListSet.Items, False);
+//        // select the "on" items
+//        for I := 0 to ListSet.Items.Count - 1 do
+//          ListSet.Selected [I] :=
+//            IsBitOn (GetOrdProp (CurrComp, ppINfo), I);
+//        PlaceControl (ListSet);
+//        ListSet.Height := ListSet.Height * 8;
+//      end;
+//      // tkClass: //// see double click...
+//    end;
+//  end;
+//end;
 
 // create and show a dialog box a string list editor..
 procedure TCantObjDebForm.EditStringList (Str: TStrings);
@@ -1154,30 +1156,17 @@ begin
   end;
 end;
 
-procedure TCantObjDebForm.sgDataSelectCell(Sender: TObject; ACol, ARow: Integer;
-  var CanSelect: Boolean);
-var
-  sg: TStringGrid;
-  ptInfo: PTypeInfo;
-begin
-  sg := Sender as TStringGrid;
-  // get the data and show it in the first line
-  ptInfo := PTypeInfo (sg.Objects [0, ARow] );
-  sg.Cells [1, 0] := string(ptInfo.Name);
-  sg.Objects [1, 0] := Pointer (ptInfo);
-end;
-
-procedure TCantObjDebForm.sgMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var
-  sg: TStringGrid;
-  ACol, ARow: Longint;
-begin
-  sg := Sender as TStringGrid;
-  sg.MouseToCell (X, Y, ACol, ARow);
-  if (ARow = 0) and (sg.Cells [1, 0] <> '') then
-    ShowRttiDetail (PTypeInfo (sg.Objects [1, 0]));
-end;
+//procedure TCantObjDebForm.sgMouseDown(Sender: TObject;
+//  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+//var
+//  sg: TStringGrid;
+//  ACol, ARow: Longint;
+//begin
+//  sg := Sender as TStringGrid;
+//  sg.MouseToCell (X, Y, ACol, ARow);
+//  if (ARow = 0) and (sg.Cells [1, 0] <> '') then
+//    ShowRttiDetail (PTypeInfo (sg.Objects [1, 0]));
+//end;
 
 //////////////////////////////////////
 ///// menu items and UI //////////////
@@ -1432,6 +1421,31 @@ begin
     FormStyle := fsNormal;
 end;
 
+procedure TCantObjDebForm.sgDataMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  SG: TStringGrid;
+  ACol, ARow: Longint;
+begin
+  SG := Sender as TStringGrid;
+  SG.MouseToCell (X, Y, ACol, ARow);
+  if (ARow = 0) and (SG.Cells [1, 0] <> '') then
+    ShowRttiDetail (PTypeInfo (SG.Objects [1, 0]));
+end;
+
+procedure TCantObjDebForm.sgDataSelectCell(Sender: TObject; ACol, ARow: Integer;
+  var CanSelect: Boolean);
+var
+  sg: TStringGrid;
+  ptInfo: PTypeInfo;
+begin
+  sg := Sender as TStringGrid;
+  // get the data and show it in the first line
+  ptInfo := PTypeInfo (sg.Objects [0, ARow] );
+  sg.Cells [1, 0] := string(ptInfo.Name);
+  sg.Objects [1, 0] := Pointer (ptInfo);
+end;
+
 procedure TCantObjDebForm.sgPropDblClick(Sender: TObject);
 begin
   if CurrProp <> nil then
@@ -1452,6 +1466,111 @@ begin
     if CurrProp.PropType^.Name = 'TStrings' then
       EditStringList (TStrings (
         GetOrdProp (CurrComp, CurrProp)));
+  end;
+end;
+
+procedure TCantObjDebForm.sgPropSelectCell(Sender: TObject; ACol, ARow: Integer;
+  var CanSelect: Boolean);
+var
+  sg: TStringGrid;
+  ppInfo: PPropInfo;
+  I: Integer;
+
+procedure PlaceControl (Ctrl: TWinControl);
+begin
+  Ctrl.BringToFront;
+  Ctrl.Show;
+  Ctrl.BoundsRect := sg.CellRect (ACol, ARow);
+  Ctrl.SetFocus;
+end;
+
+begin
+  sg := Sender as TStringGrid;
+  // get the data and show it in the first line
+  ppInfo := PPropInfo (sg.Objects [0, ARow] );
+  if (ppInfo = nil) or (sg = sgData) then
+    Exit;
+  sg.Cells [1, 0] := string(ppInfo.PropType^.Name);
+  sg.Objects [1, 0] := Pointer (ppInfo.PropType^);
+  // if second column activate the proper editor
+  if ACol = 1 then
+  begin
+    CurrProp := ppInfo;
+    CurrRow := ARow;
+    // if it is a subproperty, select the value of
+    // the property as the current component
+    if sg.Objects [1, ARow] <> nil then
+    begin
+      RealComp := CurrComp;
+      EditingSub := True;
+      CurrComp := TComponent (sg.Objects [1, ARow]);
+    end
+    else
+      CurrComp := cbComps.Items.Objects [
+        cbComps.ItemIndex] as TComponent;
+
+    ////////// depending on the type, show up an editor
+    case ppInfo.PropType^.Kind of
+
+      tkInteger: ////////////////////////////////////////
+      begin
+        if ppInfo.PropType^.Name = 'TCursor' then
+        begin
+          ComboCursor.Text := GetPropValAsString (CurrComp, ppInfo);
+          PlaceControl (ComboCursor);
+        end
+        else if ppInfo.PropType^.Name = 'TColor' then
+        begin
+          ComboColor.Tag := GetOrdProp (CurrComp, ppInfo);
+          ComboColor.Text := GetPropValAsString (CurrComp, ppInfo);
+          PlaceControl (ComboColor)
+        end else
+        begin
+          EditNum.Text := GetPropValAsString (CurrComp, ppInfo);
+          PlaceControl (EditNum);
+          EditModified := False;
+        end;
+      end;
+
+      tkChar: ////////////////////////////////////////////
+      begin
+        EditCh.Text := GetPropValAsString (CurrComp, ppInfo);
+        PlaceControl (EditCh);
+        EditModified := False;
+      end;
+
+      tkEnumeration: /////////////////////////////////////
+      begin
+        ComboEnum.Clear;
+        ListEnum (ppInfo.PropType^, ComboEnum.Items, False);
+        ComboEnum.ItemIndex := ComboEnum.Items.IndexOf (
+          GetPropValAsString (CurrComp, ppInfo));
+        PlaceControl (ComboEnum);
+      end;
+
+      tkString, tkLString, tkUString, tkWString: //////////////////////////
+      begin
+        EditStr.Text := GetPropValAsString (
+          CurrComp, ppInfo);
+        PlaceControl (EditStr);
+        EditModified := False;
+      end;
+
+      tkSet: ////////////////////////////////////////
+      begin
+        ListSet.Clear;
+        ListEnum (
+          GetTypeData (ppInfo.PropType^).CompType^,
+          ListSet.Items, False);
+        // select the "on" items
+        for I := 0 to ListSet.Items.Count - 1 do
+          ListSet.Selected [I] :=
+            IsBitOn (GetOrdProp (CurrComp, ppINfo), I);
+        PlaceControl (ListSet);
+        ListSet.Height := ListSet.Height * 8;
+      end;
+      // tkClass: //// see double click...
+    end;
   end;
 end;
 

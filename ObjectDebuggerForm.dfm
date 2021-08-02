@@ -2,8 +2,8 @@ object CantObjDebForm: TCantObjDebForm
   Left = 295
   Top = 107
   Caption = 'Object Debugger'
-  ClientHeight = 312
-  ClientWidth = 274
+  ClientHeight = 499
+  ClientWidth = 320
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,13 +21,16 @@ object CantObjDebForm: TCantObjDebForm
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 0
-    Top = 86
-    Width = 274
-    Height = 226
-    ActivePage = TabSheet3
+    Top = 85
+    Width = 320
+    Height = 414
+    ActivePage = TabSheet1
     Align = alClient
-    TabOrder = 2
+    TabOrder = 1
     OnChange = PageControl1Change
+    ExplicitTop = 86
+    ExplicitWidth = 260
+    ExplicitHeight = 293
     object TabSheet1: TTabSheet
       Caption = 'Properties'
       object ListSet: TListBox
@@ -105,8 +108,8 @@ object CantObjDebForm: TCantObjDebForm
       object sgProp: TStringGrid
         Left = 0
         Top = 0
-        Width = 266
-        Height = 198
+        Width = 312
+        Height = 386
         Align = alClient
         Color = clBtnFace
         ColCount = 2
@@ -118,8 +121,9 @@ object CantObjDebForm: TCantObjDebForm
         ScrollBars = ssVertical
         TabOrder = 0
         OnDblClick = sgPropDblClick
-        OnMouseDown = sgMouseDown
+        OnMouseDown = sgDataMouseDown
         OnSelectCell = sgPropSelectCell
+        ExplicitWidth = 342
         ColWidths = (
           109
           120)
@@ -143,8 +147,8 @@ object CantObjDebForm: TCantObjDebForm
       object sgEvt: TStringGrid
         Left = 0
         Top = 0
-        Width = 266
-        Height = 198
+        Width = 312
+        Height = 386
         Align = alClient
         Color = clBtnFace
         ColCount = 2
@@ -155,8 +159,9 @@ object CantObjDebForm: TCantObjDebForm
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing]
         ScrollBars = ssVertical
         TabOrder = 0
-        OnMouseDown = sgMouseDown
+        OnMouseDown = sgDataMouseDown
         OnSelectCell = sgPropSelectCell
+        ExplicitWidth = 342
         ColWidths = (
           109
           120)
@@ -180,8 +185,8 @@ object CantObjDebForm: TCantObjDebForm
       object sgData: TStringGrid
         Left = 0
         Top = 0
-        Width = 266
-        Height = 198
+        Width = 312
+        Height = 386
         Align = alClient
         Color = clBtnFace
         ColCount = 2
@@ -192,8 +197,10 @@ object CantObjDebForm: TCantObjDebForm
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing]
         ScrollBars = ssVertical
         TabOrder = 0
-        OnMouseDown = sgMouseDown
+        OnMouseDown = sgDataMouseDown
         OnSelectCell = sgDataSelectCell
+        ExplicitWidth = 252
+        ExplicitHeight = 265
         ColWidths = (
           109
           120)
@@ -216,48 +223,63 @@ object CantObjDebForm: TCantObjDebForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 274
-    Height = 65
+    Width = 320
+    Height = 85
     Align = alTop
     TabOrder = 0
+    ExplicitWidth = 350
     object cbComps: TComboBox
-      Left = 8
-      Top = 34
-      Width = 257
+      AlignWithMargins = True
+      Left = 4
+      Top = 31
+      Width = 312
       Height = 21
+      Align = alTop
       Style = csDropDownList
       Sorted = True
       TabOrder = 0
       OnChange = cbCompsChange
+      ExplicitLeft = 8
+      ExplicitTop = 35
+      ExplicitWidth = 257
     end
     object cbForms: TComboBox
-      Left = 8
-      Top = 8
-      Width = 257
+      AlignWithMargins = True
+      Left = 4
+      Top = 4
+      Width = 312
       Height = 21
+      Align = alTop
       Style = csDropDownList
       TabOrder = 1
       OnChange = cbFormsChange
+      ExplicitLeft = 8
+      ExplicitTop = 8
+      ExplicitWidth = 257
     end
-  end
-  object edFilter: TButtonedEdit
-    Left = 0
-    Top = 65
-    Width = 274
-    Height = 21
-    Align = alTop
-    Images = ImageList1
-    LeftButton.Enabled = False
-    LeftButton.ImageIndex = 1
-    LeftButton.Visible = True
-    RightButton.Hint = 'Clear the filter'
-    RightButton.ImageIndex = 0
-    RightButton.Visible = True
-    TabOrder = 1
-    TextHint = 'Type to filter...'
-    OnChange = SearchBox1Change
-    OnKeyDown = edFilterKeyDown
-    OnRightButtonClick = edFilterRightButtonClick
+    object edFilter: TButtonedEdit
+      AlignWithMargins = True
+      Left = 4
+      Top = 58
+      Width = 312
+      Height = 21
+      Align = alTop
+      Images = ImageList1
+      LeftButton.Enabled = False
+      LeftButton.ImageIndex = 1
+      LeftButton.Visible = True
+      RightButton.Hint = 'Clear the filter'
+      RightButton.ImageIndex = 0
+      RightButton.Visible = True
+      TabOrder = 2
+      TextHint = 'Type to filter...'
+      OnChange = SearchBox1Change
+      OnKeyDown = edFilterKeyDown
+      OnRightButtonClick = edFilterRightButtonClick
+      ExplicitLeft = 0
+      ExplicitTop = 104
+      ExplicitWidth = 350
+    end
   end
   object ColorDialog1: TColorDialog
     Left = 96
@@ -319,7 +341,7 @@ object CantObjDebForm: TCantObjDebForm
     Left = 196
     Top = 150
     Bitmap = {
-      494C0101020008003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
