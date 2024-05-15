@@ -243,26 +243,6 @@ object CantObjDebForm: TCantObjDebForm
       TabOrder = 1
       OnChange = cbFormsChange
     end
-    object edFilter: TButtonedEdit
-      AlignWithMargins = True
-      Left = 4
-      Top = 58
-      Width = 312
-      Height = 21
-      Align = alTop
-      Images = ImageList1
-      LeftButton.Enabled = False
-      LeftButton.ImageIndex = 1
-      LeftButton.Visible = True
-      RightButton.Hint = 'Clear the filter'
-      RightButton.ImageIndex = 0
-      RightButton.Visible = True
-      TabOrder = 2
-      TextHint = 'Type to filter...'
-      OnChange = SearchBox1Change
-      OnKeyDown = edFilterKeyDown
-      OnRightButtonClick = edFilterRightButtonClick
-    end
   end
   object ColorDialog1: TColorDialog
     Left = 96

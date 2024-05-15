@@ -30,8 +30,11 @@ package ObjectDebugger;
 requires
   rtl,
   vcl,
-  vclimg,
-  vclwinx;
+  vclimg
+  {$IFDEF UNICODE}
+  , vclwinx
+  {$ENDIF}
+  ;
 
 contains
   ObjectDebuggerForm in 'ObjectDebuggerForm.pas' {CantObjDebForm};

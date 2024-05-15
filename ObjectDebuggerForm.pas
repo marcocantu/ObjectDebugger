@@ -12,10 +12,14 @@ unit ObjectDebuggerForm;
 
 interface
 
+{$INCLUDE ObjectDebuggerForm.inc}
+
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls,
-  Forms, Dialogs, StdCtrls, TypInfo, ExtCtrls, Grids,
-  Buttons, Menus, ComCtrls, Vcl.WinXCtrls, System.ImageList, Vcl.ImgList;
+  {$IFDEF D2007_UP}
+  Vcl.WinXCtrls, System.ImageList, Vcl.ImgList,
+  {$ELSE}ImgList,{$ENDIF}
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, TypInfo, ExtCtrls, Grids, Buttons, Menus, ComCtrls;
 
 ////// component //////
 
@@ -83,7 +87,6 @@ type
     Timer1: TTimer;
     TabSheet3: TTabSheet;
     sgData: TStringGrid;
-    edFilter: TButtonedEdit;
     ImageList1: TImageList;
     procedure cbFormsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -152,8 +155,10 @@ type
     procedure UpdateCompsCombo;
     procedure UpdateProps;
     procedure UpdateData;
-    procedure EditStringList (Str: TStrings);
-    procedure AddToCombo (const S: String);
+    procedure EditStringList(Str: TStrings);
+    procedure AddToCombo(const S: string);
+  published
+    {$IFDEF D2007_UP}edFilter: TButtonedEdit; {$ELSE}edFilter: TEdit; {$ENDIF}
   end;
 
 var
@@ -164,7 +169,7 @@ implementation
 {$R *.DFM}
 
 uses
-  Math, System.UITypes, System.RegularExpressions;
+  Math;
 
 const
   VersionDescription = 'Object Debugger for Delphi';
@@ -561,7 +566,7 @@ begin
     tkFloat:
       Result := FloatToStr (GetFloatProp (Obj, PropInfo));
 
-    tkString, tkLString, tkUString, tkWString:
+    tkString, tkLString, {$IFDEF D2007_UP} tkUString,{$ENDIF} tkWString:
       Result := GetStrProp (Obj, PropInfo);
 
     tkSet:
@@ -651,6 +656,41 @@ end;
 
 {initialize the local data to nil and so on...}
 procedure TCantObjDebForm.FormCreate(Sender: TObject);
+
+  procedure CreateEdFilter;
+  begin
+    {$IFDEF D2007_UP}
+    edFilter := TButtonedEdit.Create(Self);
+    {$ELSE}
+    edFilter := TEdit.Create(Self)
+    {$ENDIF};
+    edFilter.Parent := Panel1;
+    edFilter.AlignWithMargins := True;
+    edFilter.Margins.Left := 4;
+    edFilter.Width := 312;
+    edFilter.Height := 21;
+    edFilter.Align := alTop;
+    edFilter.TabOrder := 2;
+    edFilter.OnChange := SearchBox1Change;
+    edFilter.OnKeyDown := edFilterKeyDown;
+    edfilter.Top := cbComps.Top + cbComps.Height + 4;
+
+    {$IFDEF D2007_UP}
+    if Assigned(ImageList1) then
+      edFilter.Images := ImageList1;
+    edFilter.LeftButton.Enabled := False;
+    edFilter.LeftButton.ImageIndex := 1;
+    edFilter.LeftButton.Visible := True;
+    edFilter.RightButton.Hint := 'Clear the filter';
+    edFilter.RightButton.ImageIndex := 0;
+    edFilter.RightButton.Visible := True;
+    edFilter.OnRightButtonClick := edFilterRightButtonClick;
+    edFilter.TextHint := 'Type to filter...';
+    {$ELSE}
+    edFilter.Hint := 'Type to filter...';
+    {$ENDIF}
+  end;
+
 begin
   CurrForm := nil;
   CurrComp := nil;
@@ -669,7 +709,9 @@ begin
   GetColorValues (AddToCombo);
   // initialize filter
   FFilterCriteria := '';
-  edFilter.TextHint := 'Search ' + PageControl1.ActivePage.Caption;
+  CreateEdFilter;
+  {$IFDEF D2007_UP} edFilter.TextHint := {$ELSE} edFilter.Hint := {$ENDIF}
+    'Search ' + PageControl1.ActivePage.Caption;
 end;
 
 procedure TCantObjDebForm.FormDestroy(Sender: TObject);
@@ -923,6 +965,11 @@ var
     end;
   end;
 
+function SetToCardinal(S: TControlState): Cardinal;
+begin
+  Move(S, Result, SizeOf(S));
+end;
+
 begin
   // reset type
   sgEvt.Cells [1, 0] := '';
@@ -961,7 +1008,7 @@ begin
     with TControl (CurrComp) do
     begin
       AddLine ('ControlState',
-        SetToString (Cardinal (ControlState), TypeInfo (TControlState)),
+        SetToString (SetToCardinal(ControlState), TypeInfo (TControlState)),
         TypeInfo (TControlState));  
       AddLine ('ControlStyle',
         SetToString (Cardinal (ControlStyle), TypeInfo (TControlStyle)),
@@ -1241,7 +1288,11 @@ end;
 
 procedure TCantObjDebForm.EditNumKeyPress(Sender: TObject; var Key: Char);
 begin
+  {$IFDEF D2007_UP}
   if not CharInSet(Key, ['0'..'9']) and not (Key = #8) then
+  {$ELSE}
+  if not (Key in ['0'..'9', #8]) then
+  {$ENDIF}
     Key := #0;
 end;
 
@@ -1270,20 +1321,42 @@ begin
 end;
 
 procedure TCantObjDebForm.ComboColorChange(Sender: TObject);
+
+  function IsValidHexColor(const aColor: string): Boolean;
+  var
+    I: Integer;
+  begin
+    Result := False;
+    if Length(aColor) < 7 then // minimum length: 7 chars ($ + 6 hex digits)
+      Exit;
+    if (aColor[1] <> '$') then // must start with '$'
+      Exit;
+
+    for I := 2 to Length(aColor) do
+    begin
+      {$IFDEF D2007_UP}
+      if not CharInSet(aColor[I], ['0'..'9', 'A'..'F', 'a'..'f']) then
+      {$ELSE}
+      if not (aColor[I] in ['0'..'9', 'A'..'F', 'a'..'f']) then
+      {$ENDIF}
+        Exit;
+    end;
+    Result := True; // valid hex color
+  end;
+
 var
   Color: LongInt;
 begin
-  if IdentToColor (ComboColor.Text, Color) then
+  if IdentToColor(ComboColor.Text, Color) then
     ComboColor.Tag := Color
   else
   begin
-    // hex values are 9 chars length, but at least 7 works (00 are added to the beginning)
-    if TRegEx.IsMatch(ComboColor.Text, '^\$[a-fA-F0-9]{6,8}\Z') then
+    if IsValidHexColor(ComboColor.Text) then
       Color := StringToColor(ComboColor.Text)
     else
-      Color := TColor (ComboColor.Tag);
+      Color := TColor(ComboColor.Tag);
   end;
-  SetOrdProp (CurrComp, CurrProp, Color);
+  SetOrdProp(CurrComp, CurrProp, Color);
 end;
 
 ///////// combo cursor ///////////
@@ -1329,7 +1402,8 @@ end;
 procedure TCantObjDebForm.ClearFilterEdit;
 begin
   edFilter.Text := '';
-  edFilter.TextHint := 'Search ' + PageControl1.ActivePage.Caption;
+  {$IFDEF D2007_UP} edFilter.TextHint := {$ELSE} edFilter.Hint := {$ENDIF}
+    'Search ' + PageControl1.ActivePage.Caption;
   UpdateProps;
   UpdateData;
 end;
@@ -1551,7 +1625,7 @@ begin
         PlaceControl (ComboEnum);
       end;
 
-      tkString, tkLString, tkUString, tkWString: //////////////////////////
+      tkString, tkLString, {$IFDEF D2007_UP} tkUString,{$ENDIF} tkWString: //////////////////////////
       begin
         EditStr.Text := GetPropValAsString (
           CurrComp, ppInfo);
