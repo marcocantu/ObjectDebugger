@@ -1,72 +1,99 @@
 object CantObjDebForm: TCantObjDebForm
   Left = 295
   Top = 107
+  Margins.Left = 6
+  Margins.Top = 6
+  Margins.Right = 6
+  Margins.Bottom = 6
   Caption = 'Object Debugger'
-  ClientHeight = 499
-  ClientWidth = 320
+  ClientHeight = 998
+  ClientWidth = 640
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -22
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   Menu = MainMenu1
-  OldCreateOrder = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 13
+  PixelsPerInch = 192
+  TextHeight = 26
   object PageControl1: TPageControl
     Left = 0
-    Top = 85
-    Width = 320
-    Height = 414
+    Top = 170
+    Width = 640
+    Height = 828
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 1
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Caption = 'Properties'
       object ListSet: TListBox
-        Left = 88
-        Top = 112
-        Width = 121
-        Height = 97
+        Left = 176
+        Top = 224
+        Width = 242
+        Height = 194
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         ExtendedSelect = False
-        ItemHeight = 13
+        ItemHeight = 26
         MultiSelect = True
         TabOrder = 7
         OnClick = ListSetClick
         OnExit = RefreshOnExit
       end
       object EditCh: TEdit
-        Left = 64
-        Top = 80
-        Width = 121
-        Height = 21
+        Left = 128
+        Top = 160
+        Width = 242
+        Height = 34
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         TabOrder = 6
         Text = 'EditCh'
         OnChange = EditChange
         OnExit = EditChExit
       end
       object EditStr: TEdit
-        Left = 80
-        Top = 160
-        Width = 121
-        Height = 21
+        Left = 160
+        Top = 320
+        Width = 242
+        Height = 34
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         TabOrder = 5
         Text = 'EditStr'
         OnChange = EditChange
         OnExit = EditStrExit
       end
       object EditNum: TEdit
-        Left = 72
-        Top = 128
-        Width = 121
-        Height = 21
+        Left = 144
+        Top = 256
+        Width = 242
+        Height = 34
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         TabOrder = 4
         Text = 'EditNum'
         OnChange = EditChange
@@ -74,29 +101,41 @@ object CantObjDebForm: TCantObjDebForm
         OnKeyPress = EditNumKeyPress
       end
       object ComboEnum: TComboBox
-        Left = 72
-        Top = 152
-        Width = 145
-        Height = 21
+        Left = 144
+        Top = 304
+        Width = 290
+        Height = 34
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         TabOrder = 3
         OnChange = ComboEnumChange
         OnDblClick = ComboEnumDblClick
         OnExit = RefreshOnExit
       end
       object ComboCursor: TComboBox
-        Left = 72
-        Top = 120
-        Width = 145
-        Height = 21
+        Left = 144
+        Top = 240
+        Width = 290
+        Height = 34
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         TabOrder = 2
         OnChange = ComboCursorChange
         OnExit = RefreshOnExit
       end
       object ComboColor: TComboBox
-        Left = 72
-        Top = 88
-        Width = 121
-        Height = 21
+        Left = 144
+        Top = 176
+        Width = 242
+        Height = 34
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         TabOrder = 1
         OnChange = ComboColorChange
         OnDblClick = ComboColorDblClick
@@ -105,13 +144,17 @@ object CantObjDebForm: TCantObjDebForm
       object sgProp: TStringGrid
         Left = 0
         Top = 0
-        Width = 312
-        Height = 386
+        Width = 624
+        Height = 774
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Align = alClient
         Color = clBtnFace
         ColCount = 2
-        DefaultColWidth = 120
-        DefaultRowHeight = 18
+        DefaultColWidth = 240
+        DefaultRowHeight = 36
         FixedCols = 0
         RowCount = 12
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine]
@@ -121,35 +164,43 @@ object CantObjDebForm: TCantObjDebForm
         OnMouseDown = sgDataMouseDown
         OnSelectCell = sgPropSelectCell
         ColWidths = (
-          109
-          120)
+          218
+          240)
         RowHeights = (
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18)
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36)
       end
     end
     object TabSheet2: TTabSheet
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Caption = 'Events'
       object sgEvt: TStringGrid
         Left = 0
         Top = 0
-        Width = 312
-        Height = 386
+        Width = 624
+        Height = 772
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Align = alClient
         Color = clBtnFace
         ColCount = 2
-        DefaultColWidth = 120
-        DefaultRowHeight = 18
+        DefaultColWidth = 240
+        DefaultRowHeight = 36
         FixedCols = 0
         RowCount = 12
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing]
@@ -158,35 +209,43 @@ object CantObjDebForm: TCantObjDebForm
         OnMouseDown = sgDataMouseDown
         OnSelectCell = sgPropSelectCell
         ColWidths = (
-          109
-          120)
+          218
+          240)
         RowHeights = (
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18)
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36)
       end
     end
     object TabSheet3: TTabSheet
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Caption = 'Data'
       object sgData: TStringGrid
         Left = 0
         Top = 0
-        Width = 312
-        Height = 386
+        Width = 624
+        Height = 772
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Align = alClient
         Color = clBtnFace
         ColCount = 2
-        DefaultColWidth = 120
-        DefaultRowHeight = 18
+        DefaultColWidth = 240
+        DefaultRowHeight = 36
         FixedCols = 0
         RowCount = 12
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing]
@@ -195,37 +254,45 @@ object CantObjDebForm: TCantObjDebForm
         OnMouseDown = sgDataMouseDown
         OnSelectCell = sgDataSelectCell
         ColWidths = (
-          109
-          120)
+          218
+          240)
         RowHeights = (
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18
-          18)
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36
+          36)
       end
     end
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 320
-    Height = 85
+    Width = 640
+    Height = 170
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
     Align = alTop
     TabOrder = 0
     object cbComps: TComboBox
       AlignWithMargins = True
-      Left = 4
-      Top = 31
-      Width = 312
-      Height = 21
+      Left = 7
+      Top = 53
+      Width = 626
+      Height = 34
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Align = alTop
       Style = csDropDownList
       Sorted = True
@@ -234,10 +301,14 @@ object CantObjDebForm: TCantObjDebForm
     end
     object cbForms: TComboBox
       AlignWithMargins = True
-      Left = 4
-      Top = 4
-      Width = 312
-      Height = 21
+      Left = 7
+      Top = 7
+      Width = 626
+      Height = 34
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Align = alTop
       Style = csDropDownList
       TabOrder = 1
@@ -245,10 +316,14 @@ object CantObjDebForm: TCantObjDebForm
     end
     object edFilter: TButtonedEdit
       AlignWithMargins = True
-      Left = 4
-      Top = 58
-      Width = 312
-      Height = 21
+      Left = 7
+      Top = 99
+      Width = 626
+      Height = 34
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Align = alTop
       Images = ImageList1
       LeftButton.Enabled = False

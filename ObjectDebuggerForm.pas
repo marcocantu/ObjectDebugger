@@ -168,8 +168,8 @@ uses
 
 const
   VersionDescription = 'Object Debugger for Delphi';
-  VersionRelease = 'Release 5.50';
-  CopyrightString = 'Marco Cantù 1996-2021';
+  VersionRelease = 'Release 5.51';
+  CopyrightString = 'Marco Cantù 1996-2024';
 
 /////////// support code //////////////
 
@@ -1529,9 +1529,13 @@ begin
           PlaceControl (ComboColor)
         end else
         begin
-          EditNum.Text := GetPropValAsString (CurrComp, ppInfo);
-          PlaceControl (EditNum);
-          EditModified := False;
+          EditNum.OnChange := nil;
+          try
+            EditNum.Text := GetPropValAsString (CurrComp, ppInfo);
+            PlaceControl (EditNum);
+          finally
+            EditNum.OnChange := EditChange;
+          end;
         end;
       end;
 
@@ -1539,7 +1543,6 @@ begin
       begin
         EditCh.Text := GetPropValAsString (CurrComp, ppInfo);
         PlaceControl (EditCh);
-        EditModified := False;
       end;
 
       tkEnumeration: /////////////////////////////////////
@@ -1553,10 +1556,13 @@ begin
 
       tkString, tkLString, tkUString, tkWString: //////////////////////////
       begin
-        EditStr.Text := GetPropValAsString (
-          CurrComp, ppInfo);
-        PlaceControl (EditStr);
-        EditModified := False;
+        EditStr.OnChange := nil;
+        try
+          EditStr.Text := GetPropValAsString (CurrComp, ppInfo);
+          PlaceControl (EditStr);
+        finally
+          EditStr.OnChange := EditChange;
+        end;
       end;
 
       tkSet: ////////////////////////////////////////
@@ -1574,6 +1580,7 @@ begin
       end;
       // tkClass: //// see double click...
     end;
+    EditModified := False;
   end;
 end;
 
